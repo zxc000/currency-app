@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>匯率換算</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="匯率換算">
+  <link rel="apple-touch-icon" href="icon.png">
+  <meta name="theme-color" content="#1a1a2e">
+</head>
+<body>
+  <div class="bg-gradient">
+    <main class="container">
+      <header>
+        <h1>匯率換算</h1>
+        <span id="update-time" class="update-time"></span>
+      </header>
+
+      <!-- 輸入區 -->
+      <div class="input-card">
+        <div class="input-row">
+          <input
+            type="number"
+            id="amount-input"
+            placeholder="輸入金額"
+            min="0"
+            step="any"
+            value="1"
+            autocomplete="off"
+          >
+          <select id="base-currency" aria-label="基準貨幣"></select>
+        </div>
+      </div>
+
+      <!-- 錯誤提示 -->
+      <div class="error-banner" id="error-banner" hidden>
+        <span>⚠</span> <span id="error-message">無法取得最新匯率，請檢查網路連線後重試</span>
+      </div>
+
+      <!-- 多幣種結果列表 -->
+      <div class="results-card" id="results-card">
+        <div class="results-list" id="results-list">
+          <!-- 由 JS 動態產生 -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
