@@ -239,18 +239,22 @@ input[type="number"]::-webkit-outer-spin-button {
 /* History button in currency row */
 .history-btn {
   flex-shrink: 0;
-  background: none;
+  background: #f0efff;
   border: none;
-  font-size: 1rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #6c63ff;
   cursor: pointer;
-  padding: 0.2rem;
-  opacity: 0.55;
+  padding: 0.25rem 0.55rem;
+  letter-spacing: 0.02em;
   -webkit-tap-highlight-color: transparent;
-  transition: opacity 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 .history-btn:hover {
-  opacity: 1;
+  background: #6c63ff;
+  color: #fff;
 }
 
 /* History chart modal */
@@ -259,67 +263,100 @@ input[type="number"]::-webkit-outer-spin-button {
   inset: 0;
   z-index: 100;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
-  padding: 1rem;
+  padding: 0;
+  animation: modal-fade-in 0.2s ease;
 }
 
 .chart-modal[hidden] {
   display: none;
 }
 
+@keyframes modal-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 .chart-modal-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(10, 15, 30, 0.75);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .chart-modal-box {
   position: relative;
-  background: #fff;
-  border-radius: 20px;
-  padding: 1.5rem 1.25rem 1.25rem;
+  background: #1e2a45;
+  border-radius: 24px 24px 0 0;
+  padding: 1.25rem 1.25rem 2rem;
   width: 100%;
   max-width: 480px;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.5);
+  animation: sheet-slide-up 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@keyframes sheet-slide-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+/* drag handle */
+.chart-modal-box::before {
+  content: '';
+  display: block;
+  width: 2.5rem;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  margin: 0 auto 1.25rem;
 }
 
 .chart-modal-close {
   position: absolute;
-  top: 0.75rem;
+  top: 1rem;
   right: 1rem;
-  background: none;
+  background: rgba(255, 255, 255, 0.1);
   border: none;
-  font-size: 1.6rem;
-  color: #999;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
   line-height: 1;
-  padding: 0.2rem 0.4rem;
   -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s ease;
 }
 
 .chart-modal-close:hover {
-  color: #333;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
 }
 
 .chart-modal-title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #1a1a2e;
-  margin-bottom: 1rem;
-  padding-right: 2rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 1.25rem;
+  padding-right: 2.5rem;
+  letter-spacing: 0.01em;
 }
 
 .chart-loading {
   text-align: center;
-  color: #999;
-  padding: 2rem 0;
-  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.4);
+  padding: 3rem 0;
+  font-size: 0.85rem;
 }
 
 .chart-canvas-wrap {
   position: relative;
-  height: 220px;
+  height: 200px;
 }
 
 .chart-canvas-wrap[hidden] {

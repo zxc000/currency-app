@@ -82,7 +82,7 @@ function buildResultRows() {
       <span class="currency-code">${code.toUpperCase()}</span>
       <span class="currency-name">${ZH_NAMES[code] || state.names[code] || ''}</span>
       <span class="currency-amount skeleton" style="width:6rem">&nbsp;</span>
-      <button class="history-btn" data-code="${code}" aria-label="${code.toUpperCase()} 歷史走勢">📈</button>
+      <button class="history-btn" data-code="${code}" aria-label="${code.toUpperCase()} 歷史走勢">走勢</button>
     `
     resultsList.appendChild(row)
   })
@@ -201,13 +201,18 @@ function renderChart(data, base, target) {
   const maxRate = Math.max(...rates)
   const minRate = Math.min(...rates)
 
+  const pointRadii = rates.map(r => (r === maxRate || r === minRate) ? 5 : 0)
   const pointColors = rates.map(r => {
-    if (r === maxRate) return '#22c55e'
-    if (r === minRate) return '#ef4444'
+    if (r === maxRate) return '#4ade80'
+    if (r === minRate) return '#f87171'
     return '#6c63ff'
   })
 
   const ctx = document.getElementById('history-chart').getContext('2d')
+  const gradient = ctx.createLinearGradient(0, 0, 0, 200)
+  gradient.addColorStop(0, 'rgba(108, 99, 255, 0.35)')
+  gradient.addColorStop(1, 'rgba(108, 99, 255, 0)')
+
   historyChart = new Chart(ctx, {
     type: 'line',
     data: {
@@ -217,9 +222,11 @@ function renderChart(data, base, target) {
         borderColor: '#6c63ff',
         borderWidth: 2,
         pointBackgroundColor: pointColors,
-        pointRadius: 3,
-        tension: 0.3,
-        fill: false,
+        pointRadius: pointRadii,
+        pointHoverRadius: 5,
+        tension: 0.4,
+        fill: true,
+        backgroundColor: gradient,
       }]
     },
     options: {
@@ -228,16 +235,33 @@ function renderChart(data, base, target) {
       plugins: {
         legend: { display: false },
         tooltip: {
+          backgroundColor: 'rgba(30, 42, 69, 0.95)',
+          titleColor: 'rgba(255,255,255,0.5)',
+          bodyColor: '#fff',
+          borderColor: 'rgba(108,99,255,0.4)',
+          borderWidth: 1,
+          padding: 10,
           callbacks: {
-            label: ctx => `${ctx.parsed.y}${ctx.parsed.y === maxRate ? ' ▲最高' : ctx.parsed.y === minRate ? ' ▼最低' : ''}`,
-          }
-        }
+            label: c => {
+              const tag = c.parsed.y === maxRate ? '  ▲ 最高' : c.parsed.y === minRate ? '  ▼ 最低' : ''
+              return `${c.parsed.y}${tag}`
+            },
+          },
+        },
       },
       scales: {
-        x: { ticks: { font: { size: 10 } } },
-        y: { ticks: { font: { size: 10 } } },
-      }
-    }
+        x: {
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: { color: 'rgba(255,255,255,0.4)', font: { size: 10 }, maxTicksLimit: 7 },
+          border: { display: false },
+        },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: { color: 'rgba(255,255,255,0.4)', font: { size: 10 }, maxTicksLimit: 5 },
+          border: { display: false },
+        },
+      },
+    },
   })
 }
 
