@@ -171,9 +171,9 @@ let historyChart = null
 
 async function fetchHistory(base, target) {
   const today = new Date()
-  const dates = Array.from({ length: 30 }, (_, i) => {
+  const dates = Array.from({ length: 120 }, (_, i) => {
     const d = new Date(today)
-    d.setDate(today.getDate() - (29 - i))
+    d.setDate(today.getDate() - (119 - i))
     return d.toISOString().slice(0, 10)  // YYYY-MM-DD
   })
 
@@ -271,7 +271,7 @@ async function openHistoryModal(base, target) {
   const loadingEl = document.getElementById('chart-loading')
   const canvasWrap = document.getElementById('chart-canvas-wrap')
 
-  titleEl.textContent = `${base.toUpperCase()} → ${target.toUpperCase()} 近 30 天走勢`
+  titleEl.textContent = `${base.toUpperCase()} → ${target.toUpperCase()} 近 120 天走勢`
   loadingEl.hidden = false
   canvasWrap.hidden = true
   modal.hidden = false
