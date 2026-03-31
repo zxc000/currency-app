@@ -82,6 +82,7 @@ function buildResultRows() {
       <span class="currency-code">${code.toUpperCase()}</span>
       <span class="currency-name">${ZH_NAMES[code] || state.names[code] || ''}</span>
       <span class="currency-amount skeleton" style="width:6rem">&nbsp;</span>
+      <button class="history-btn" data-code="${code}" aria-label="${code.toUpperCase()} 歷史走勢">📈</button>
     `
     resultsList.appendChild(row)
   })
@@ -164,7 +165,124 @@ async function init() {
   await refresh(state.base)
 }
 
+// --- History chart ---
+
+let historyChart = null
+
+async function fetchHistory(base, target) {
+  const today = new Date()
+  const dates = Array.from({ length: 30 }, (_, i) => {
+    const d = new Date(today)
+    d.setDate(today.getDate() - (29 - i))
+    return d.toISOString().slice(0, 10)  // YYYY-MM-DD
+  })
+
+  const results = await Promise.all(
+    dates.map(async date => {
+      try {
+        const res = await fetch(
+          `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@${date}/v1/currencies/${base}.json`,
+          { signal: AbortSignal.timeout(5000) }
+        )
+        if (!res.ok) return null
+        const data = await res.json()
+        const rate = data[base]?.[target]
+        return rate != null ? { date, rate } : null
+      } catch {
+        return null
+      }
+    })
+  )
+  return results.filter(Boolean)
+}
+
+function renderChart(data, base, target) {
+  const rates = data.map(d => d.rate)
+  const maxRate = Math.max(...rates)
+  const minRate = Math.min(...rates)
+
+  const pointColors = rates.map(r => {
+    if (r === maxRate) return '#22c55e'
+    if (r === minRate) return '#ef4444'
+    return '#6c63ff'
+  })
+
+  const ctx = document.getElementById('history-chart').getContext('2d')
+  historyChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: data.map(d => d.date.slice(5)),  // MM-DD
+      datasets: [{
+        data: rates,
+        borderColor: '#6c63ff',
+        borderWidth: 2,
+        pointBackgroundColor: pointColors,
+        pointRadius: 3,
+        tension: 0.3,
+        fill: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => `${ctx.parsed.y}${ctx.parsed.y === maxRate ? ' ▲最高' : ctx.parsed.y === minRate ? ' ▼最低' : ''}`,
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { font: { size: 10 } } },
+        y: { ticks: { font: { size: 10 } } },
+      }
+    }
+  })
+}
+
+async function openHistoryModal(base, target) {
+  const modal = document.getElementById('chart-modal')
+  const titleEl = document.getElementById('chart-title')
+  const loadingEl = document.getElementById('chart-loading')
+  const canvasWrap = document.getElementById('chart-canvas-wrap')
+
+  titleEl.textContent = `${base.toUpperCase()} → ${target.toUpperCase()} 近 30 天走勢`
+  loadingEl.hidden = false
+  canvasWrap.hidden = true
+  modal.hidden = false
+
+  const data = await fetchHistory(base, target)
+
+  loadingEl.hidden = true
+  if (data.length > 0) {
+    canvasWrap.hidden = false
+    renderChart(data, base, target)
+  } else {
+    loadingEl.textContent = '無法取得歷史資料'
+    loadingEl.hidden = false
+  }
+}
+
+function closeHistoryModal() {
+  const modal = document.getElementById('chart-modal')
+  modal.hidden = true
+  if (historyChart) {
+    historyChart.destroy()
+    historyChart = null
+  }
+  document.getElementById('chart-loading').textContent = '載入中…'
+}
+
+document.getElementById('chart-modal-close').addEventListener('click', closeHistoryModal)
+document.getElementById('chart-modal-overlay').addEventListener('click', closeHistoryModal)
+
 // --- Events ---
+
+resultsList.addEventListener('click', e => {
+  const btn = e.target.closest('.history-btn')
+  if (btn) openHistoryModal(state.base, btn.dataset.code)
+})
 
 document.getElementById('refresh-btn').addEventListener('click', () => {
   state.lastFetchBase = null

@@ -52,6 +52,21 @@
     </main>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- 歷史圖表 Modal -->
+  <div class="chart-modal" id="chart-modal" hidden>
+    <div class="chart-modal-overlay" id="chart-modal-overlay"></div>
+    <div class="chart-modal-box">
+      <button class="chart-modal-close" id="chart-modal-close" aria-label="關閉">×</button>
+      <h2 class="chart-modal-title" id="chart-title"></h2>
+      <div class="chart-loading" id="chart-loading">載入中…</div>
+      <div class="chart-canvas-wrap" id="chart-canvas-wrap" hidden>
+        <canvas id="history-chart"></canvas>
+      </div>
+    </div>
+  </div>
+
   <script src="app.js"></script>
 </body>
 </html>

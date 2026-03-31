@@ -235,3 +235,93 @@ input[type="number"]::-webkit-outer-spin-button {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+/* History button in currency row */
+.history-btn {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.2rem;
+  opacity: 0.55;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 0.15s ease;
+}
+
+.history-btn:hover {
+  opacity: 1;
+}
+
+/* History chart modal */
+.chart-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.chart-modal[hidden] {
+  display: none;
+}
+
+.chart-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.chart-modal-box {
+  position: relative;
+  background: #fff;
+  border-radius: 20px;
+  padding: 1.5rem 1.25rem 1.25rem;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+}
+
+.chart-modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.6rem;
+  color: #999;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.2rem 0.4rem;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.chart-modal-close:hover {
+  color: #333;
+}
+
+.chart-modal-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 1rem;
+  padding-right: 2rem;
+}
+
+.chart-loading {
+  text-align: center;
+  color: #999;
+  padding: 2rem 0;
+  font-size: 0.9rem;
+}
+
+.chart-canvas-wrap {
+  position: relative;
+  height: 220px;
+}
+
+.chart-canvas-wrap[hidden] {
+  display: none;
+}
