@@ -158,13 +158,10 @@ async function init() {
 
 // --- Events ---
 
-const h1 = document.querySelector('h1')
-const doRefresh = () => {
+document.getElementById('refresh-btn').addEventListener('click', () => {
   state.lastFetchBase = null
   refresh(baseSelect.value)
-}
-h1.addEventListener('touchend', (e) => { e.preventDefault(); doRefresh() })
-h1.addEventListener('click', doRefresh)
+})
 
 amountInput.addEventListener('input', debounce(updateRows, 250))
 
