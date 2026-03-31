@@ -12,6 +12,14 @@ const BASE_OPTIONS = [
   'krw', 'thb', 'sgd', 'aud', 'cad', 'vnd',
 ]
 
+// 幣種中文名稱
+const ZH_NAMES = {
+  twd: '新台幣', usd: '美元', eur: '歐元', jpy: '日圓',
+  gbp: '英鎊', hkd: '港幣', cny: '人民幣', krw: '韓元',
+  thb: '泰銖', sgd: '新加坡幣', aud: '澳幣', cad: '加拿大幣',
+  vnd: '越南盾',
+}
+
 // 幣種對應國旗 emoji
 const FLAGS = {
   twd: '🇹🇼', usd: '🇺🇸', eur: '🇪🇺', jpy: '🇯🇵',
@@ -72,7 +80,7 @@ function buildResultRows() {
     row.innerHTML = `
       <span class="currency-flag">${FLAGS[code] || ''}</span>
       <span class="currency-code">${code.toUpperCase()}</span>
-      <span class="currency-name">${state.names[code] || ''}</span>
+      <span class="currency-name">${ZH_NAMES[code] || state.names[code] || ''}</span>
       <span class="currency-amount skeleton" style="width:6rem">&nbsp;</span>
     `
     resultsList.appendChild(row)
