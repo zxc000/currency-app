@@ -1,5 +1,20 @@
 const API_BASE = 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1'
 
+// 修正 iOS PWA 的 dvh 計算不穩定問題
+// visualViewport.height 回傳真正可見高度，比 window.innerHeight 更可靠
+function setAppHeight() {
+  const h = window.visualViewport ? window.visualViewport.height : window.innerHeight
+  document.documentElement.style.setProperty('--app-height', h + 'px')
+}
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', setAppHeight)
+} else {
+  window.addEventListener('resize', setAppHeight)
+}
+window.addEventListener('load', setAppHeight)
+setAppHeight()
+
+
 
 // 預設顯示的目標幣種（含 TWD、VND，移除 CHF）
 const TARGET_CURRENCIES = [
