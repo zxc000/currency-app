@@ -1,5 +1,12 @@
 const API_BASE = 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1'
 
+// iOS PWA 高度修正：window.innerHeight 在 standalone 模式下永遠正確
+function setAppHeight() {
+  document.documentElement.style.setProperty('--app-height', window.innerHeight + 'px')
+}
+window.addEventListener('resize', setAppHeight)
+setAppHeight()
+
 // 預設顯示的目標幣種（含 TWD、VND，移除 CHF）
 const TARGET_CURRENCIES = [
   'twd', 'usd', 'eur', 'jpy', 'gbp', 'hkd', 'cny',
