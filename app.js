@@ -46,6 +46,31 @@ const FLAGS = {
 
 const NO_DECIMAL = ['jpy', 'krw', 'idr', 'huf', 'isk', 'vnd']
 
+// 僅作為 IP API 失敗時的 fallback（navigator.language 地區碼 → 貨幣）
+const REGION_CURRENCY_MAP = {
+  TW: 'twd', US: 'usd', GB: 'gbp', JP: 'jpy',
+  HK: 'hkd', CN: 'cny', KR: 'krw', TH: 'thb',
+  SG: 'sgd', AU: 'aud', CA: 'cad', VN: 'vnd',
+  DE: 'eur', FR: 'eur', IT: 'eur', ES: 'eur',
+  NL: 'eur', PT: 'eur', BE: 'eur', AT: 'eur',
+}
+
+async function detectBaseCurrency() {
+  try {
+    const res = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(3000) })
+    if (res.ok) {
+      const data = await res.json()
+      const currency = data.currency?.toLowerCase()
+      if (currency && BASE_OPTIONS.includes(currency)) return currency
+    }
+  } catch {}
+
+  // Fallback：navigator.language 地區碼
+  const region = (navigator.language || '').split('-').pop().toUpperCase()
+  const fallback = REGION_CURRENCY_MAP[region]
+  return fallback && BASE_OPTIONS.includes(fallback) ? fallback : 'usd'
+}
+
 const state = {
   rates: {},       // { eur: 0.027, jpy: 4.99, ... } 以 base 為基準
   base: 'twd',
@@ -177,6 +202,7 @@ async function init() {
     console.warn('載入幣種名稱失敗，使用代碼替代', err)
   }
 
+  state.base = await detectBaseCurrency()
   populateBaseSelect()
   await refresh(state.base)
 }
