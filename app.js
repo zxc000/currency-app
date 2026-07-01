@@ -55,6 +55,15 @@ const REGION_CURRENCY_MAP = {
   NL: 'eur', PT: 'eur', BE: 'eur', AT: 'eur',
 }
 
+const DEFAULT_QUICK_AMOUNTS = [10, 50, 100, 500]
+const QUICK_AMOUNTS_BY_CURRENCY = {
+  twd: [100, 500, 1000, 3000],
+  jpy: [1000, 5000, 10000, 30000],
+  krw: [10000, 50000, 100000, 300000],
+  thb: [100, 500, 1000, 3000],
+  vnd: [100000, 500000, 1000000, 3000000],
+}
+
 async function detectBaseCurrency() {
   try {
     const res = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(3000) })
@@ -84,6 +93,7 @@ const resultsList = document.getElementById('results-list')
 const errorBanner = document.getElementById('error-banner')
 const errorMessage = document.getElementById('error-message')
 const updateTime = document.getElementById('update-time')
+const quickAmounts = document.getElementById('quick-amounts')
 
 // --- Utils ---
 
@@ -98,6 +108,12 @@ function fmt(value, code) {
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
   }).format(value)
+}
+
+function fmtQuickAmount(value) {
+  if (value >= 1000000) return `${value / 1000000}M`
+  if (value >= 1000) return `${value / 1000}K`
+  return String(value)
 }
 
 function showError(msg) {
@@ -129,9 +145,33 @@ function buildResultRows() {
   })
 }
 
+function updateQuickAmountSelection() {
+  const amount = Number(amountInput.value)
+  quickAmounts.querySelectorAll('.quick-amount-btn').forEach(btn => {
+    btn.classList.toggle('active', Number(btn.dataset.amount) === amount)
+  })
+}
+
+function buildQuickAmounts() {
+  const amounts = QUICK_AMOUNTS_BY_CURRENCY[state.base] || DEFAULT_QUICK_AMOUNTS
+
+  quickAmounts.innerHTML = ''
+  amounts.forEach(amount => {
+    const btn = document.createElement('button')
+    btn.type = 'button'
+    btn.className = 'quick-amount-btn'
+    btn.dataset.amount = amount
+    btn.textContent = fmtQuickAmount(amount)
+    quickAmounts.appendChild(btn)
+  })
+
+  updateQuickAmountSelection()
+}
+
 function updateRows() {
   const amount = parseFloat(amountInput.value)
   const rows = resultsList.querySelectorAll('.currency-row')
+  updateQuickAmountSelection()
 
   rows.forEach(row => {
     const code = row.dataset.code
@@ -181,6 +221,7 @@ function populateBaseSelect() {
 async function refresh(base) {
   state.base = base
   hideError()
+  buildQuickAmounts()
   buildResultRows()  // show skeletons immediately
 
   try {
@@ -361,6 +402,14 @@ resultsList.addEventListener('click', e => {
       refresh(code)
     }
   }
+})
+
+quickAmounts.addEventListener('click', e => {
+  const btn = e.target.closest('.quick-amount-btn')
+  if (!btn) return
+
+  amountInput.value = btn.dataset.amount
+  updateRows()
 })
 
 document.getElementById('refresh-btn').addEventListener('click', () => {
