@@ -347,7 +347,20 @@ document.getElementById('chart-modal-overlay').addEventListener('click', closeHi
 
 resultsList.addEventListener('click', e => {
   const btn = e.target.closest('.history-btn')
-  if (btn) openHistoryModal(state.base, btn.dataset.code)
+  if (btn) {
+    openHistoryModal(state.base, btn.dataset.code)
+    return
+  }
+
+  const flag = e.target.closest('.currency-flag')
+  if (flag) {
+    const row = flag.closest('.currency-row')
+    const code = row?.dataset.code
+    if (code) {
+      baseSelect.value = code
+      refresh(code)
+    }
+  }
 })
 
 document.getElementById('refresh-btn').addEventListener('click', () => {
