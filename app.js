@@ -425,8 +425,9 @@ document.getElementById('refresh-btn').addEventListener('click', () => {
   refresh(baseSelect.value)
 })
 
-amountInput.addEventListener('focus', () => {
-  amountInput.select()
+amountInput.addEventListener('click', () => {
+  amountInput.value = ''
+  updateRows()
 })
 
 amountInput.addEventListener('input', debounce(updateRows, 250))
